@@ -98,45 +98,12 @@ class table:
             })
 
         return forecast_data
-    
-    def get_weather_forecast_GisMeteo_V2(self, city, type):
-        city_url = self.cities_url[type][city]
-
-        headers = requests.utils.default_headers()
-
-        headers.update(
-            {
-                'User-Agent': 'My User Agent 1.0',
-            }
-        )
-        response = requests.get(city_url, headers=headers)
-        soup = BeautifulSoup(response.content, 'html.parser')
-
-        temp_max = soup.find_all('div', class_='maxt')
-        temp_min = soup.find_all('div', class_='mint')
-        weather = soup.find_all('div', class_='row-item')
-
-        forecast_data = []
-
-        for i in range(10):
-            max_temp = temp_max[i].find('temperature-value')["value"]
-            min_temp = temp_min[i].find('temperature-value')["value"]
-            weather_today = weather[i]['data-tooltip']
-
-            forecast_data.append({
-                'max_temp': max_temp,
-                'min_temp': min_temp,
-                'weather': weather_today
-            })
-
-        return forecast_data
 
     def create_today(self, city, type, today=datetime.now().strftime('%Y-%m-%d')):
         if type == "Yandex":
             forecast_data = self.get_weather_forecast_Yandex(city, type)
         elif type == "GisMeteo":
-            # forecast_data = self.get_weather_forecast_GisMeteo(city, type)
-            forecast_data = self.get_weather_forecast_GisMeteo_V2(city, type='GisMeteo')
+            forecast_data = self.get_weather_forecast_GisMeteo(city, type)
         else:
             raise "TypeError"
 
@@ -163,7 +130,6 @@ class table:
     def update(self, city, type):
         try:
             df_new = self.create_today(city, type)
-
             self.datasets[city][type] = pd.concat([self.datasets[city][type], df_new])
 
             self.datasets[city][type].to_csv(os.path.join(os.path.join('data'), f'{city}_{type}_10.csv'))
@@ -206,6 +172,7 @@ class table:
 
     def backup(self):
         csv_folder = os.path.join('backup')
+
         try:
             for city in self.datasets:
                 for type in self.datasets[city]:
