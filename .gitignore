@@ -1,3 +1,6 @@
 Parsing_Weather.exe
 _internal
 telegram_bot/auth_data.py
+/.idea
+/.ipynb_checkpoints
+/__pycache__
