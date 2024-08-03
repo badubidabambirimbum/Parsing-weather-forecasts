@@ -1,3 +1,4 @@
 Parsing_Weather.exe
 _internal
 auth_data.py
+telegram_bot/auth_data.py
