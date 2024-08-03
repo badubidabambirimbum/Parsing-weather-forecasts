@@ -36,6 +36,9 @@ table = table()
 async def on_startup(_):
     print("Бот был успешно запущен!")
 
+async def on_shutdown(_):
+    print("Бот выключен!")
+
 @dp.message_handler(commands=["start"])
 async def start_message(message: types.Message):
     await bot.send_sticker(message.from_user.id,
@@ -123,4 +126,4 @@ async def callback_message(callback: types.CallbackQuery):
 
 
 if __name__ == "__main__":
-    executor.start_polling(dp, on_startup=on_startup, skip_updates=True)
+    executor.start_polling(dp, on_startup=on_startup, skip_updates=True, on_shutdown=on_shutdown)
