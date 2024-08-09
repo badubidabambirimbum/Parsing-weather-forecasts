@@ -17,15 +17,39 @@ HELP_COMMAND = """
 <b>/cities</b> - доступные города
 <b>/weather</b> - обозначения погоды"""
 
-WEATHER_SMILE = {'Гроза' : " 🌩",
-                 'Ливень' : " 🌧",
-                 'Дождь' : " 💦",
-                 'Облачно с прояснениями' : ' ⛅',
-                 'Дождь с грозой' : ' ⛈',
-                 'Ясно' : ' ☀',
-                 'Пасмурно' : ' ☁',
-                 'Малооблачно' : " 🌤",
-                 'Небольшой дождь' : " 💧"}
+WEATHER_YANDEX_SMILE = {'Гроза' : "🌩",
+                 'Ливень' : "🌧",
+                 'Дождь' : "💦",
+                 'Облачно с прояснениями' : '⛅',
+                 'Дождь с грозой' : '⛈',
+                 'Ясно' : '☀',
+                 'Пасмурно' : '☁',
+                 'Малооблачно' : "🌤",
+                 'Небольшой дождь' : "💧"}
+
+WEATHER_GISMETEO_SMILE = {'Безоблачно' : "☀",
+                          'Гроза' : "🌩",
+                          'Дождь' : "💦",
+                          'Ливень' : "🌧",
+                          'Малооблачно' : "🌤",
+                          'Малооблачно, дождь' : "💦",
+                          'Малооблачно, дождь, гроза' : "⛈",
+                          'Малооблачно, без осадков' : "🌤",
+                          'Малооблачно, небольшой  дождь' : "💧",
+                          'Малооблачно, небольшой  дождь, гроза' : "💧⚡️",
+                          'Небольшой дождь' : "💧",
+                          'Облачно с прояснениями' : "⛅",
+                          'Облачно, дождь' : "🌥💦",
+                          'Облачно, дождь, гроза' : "🌥💦️⚡️",
+                          'Облачно, без осадков' : "🌥",
+                          'Облачно, небольшой дождь' : "🌥💧",
+                          'Облачно, сильный  дождь' : "🌧",
+                          'Облачно, сильный дождь, гроза' : "⛈",
+                          'Пасмурно' : "☁️",
+                          'Пасмурно, дождь, гроза' : "☁️💦⚡️",
+                          'Пасмурно, сильный  дождь' : "🌧",
+                          'Пасмурно, сильный  дождь, гроза' : "⛈",
+                          'Ясно' : "☀"}
 
 SET_CITIES = set(("Москва", "Екатеринбург", "Краснодар"))
 
@@ -67,13 +91,17 @@ async def cities_message(message: types.Message):
 
 @dp.message_handler(commands=["weather"])
 async def weather_message(message: types.Message):
-    mes = "Обозначения погоды:\n"
-    for weather in WEATHER_SMILE:
-        mes += weather + WEATHER_SMILE[weather] + "\n"
+    mes_ya = "Обозначения погоды 🔸Yandex:\n\n"
+    mes_gis = "Обозначения погоды 🔹GisMeteo:\n\n"
+    for weather in WEATHER_YANDEX_SMILE:
+        mes_ya += weather + " " +  WEATHER_YANDEX_SMILE[weather] + "\n"
+    for weather in WEATHER_GISMETEO_SMILE:
+        mes_gis += weather + " " +  WEATHER_GISMETEO_SMILE[weather] + "\n"
     await bot.send_sticker(message.from_user.id,
                            sticker="CAACAgEAAxkBAAEMj_RmqKuKC9rmnTElJX3QEr-MYpC-cAACXQMAApzteUVTI9qtaJq7kTUE",
                            reply_markup=kb_cities)
-    await message.answer(text=mes)
+    await message.answer(text=mes_ya)
+    await message.answer(text=mes_gis)
 
 @dp.message_handler()
 async def check_message(message: types.Message):
@@ -119,9 +147,9 @@ async def callback_message(callback: types.CallbackQuery):
         date = future_dates[i-1]
         forecast_data += (f"\n"
                           f"✨ {date.strftime('%Y-%m-%d')} ✨\n"
-                          f"Днем будет {str(forecast[f'day{i}'])}, Вечером {str(forecast[f'night{i}'])}, Ожидается {WEATHER_SMILE[forecast[f'weather{i}']]}\n")
+                          f"<b>Температура</b> от <b>{str(forecast[f'night{i}'])}</b> до <b>{str(forecast[f'day{i}'])}</b>\n 🔸<b>Yandex</b> прогнозирует {WEATHER_YANDEX_SMILE[forecast[f'weather{i}']]}\n 🔹<b>GisMeteo</b> прогнозирует {WEATHER_GISMETEO_SMILE[forecast[f'weather{i}']]}\n")
 
-    await bot.send_message(callback.from_user.id, text=forecast_data)
+    await bot.send_message(callback.from_user.id, text=forecast_data, parse_mode='HTML')
 
 
 

@@ -39,6 +39,7 @@ class table:
                 "Yandex": pd.read_csv(os.path.join(path_to_data, 'Ekaterinburg_Yandex_10.csv'), sep=',',
                                       index_col='date')}}
 
+
     # Получение данных с сайта Yandex
     def get_weather_forecast_Yandex(self, city, type):
         city_url = self.cities_url[type][city]
@@ -72,6 +73,7 @@ class table:
 
         return forecast_data
 
+
     # Получение данных с старой версии сайта GisMeteo
     def get_weather_forecast_GisMeteo(self, city, type):
         city_url = self.cities_url[type][city]
@@ -104,7 +106,8 @@ class table:
             })
 
         return forecast_data
-    
+
+
     # Получение данных с новой версии сайта GisMeteo
     def get_weather_forecast_GisMeteo_V2(self, city, type):
         city_url = self.cities_url[type][city]
@@ -138,6 +141,7 @@ class table:
 
         return forecast_data
 
+
     # Создание таблицы из одной строки с подгруженными данными
     def create_today(self, city, type, today=datetime.now().strftime('%Y-%m-%d')):
         if type == "Yandex":
@@ -168,69 +172,52 @@ class table:
 
         return df
 
+
     # Обновление таблицы по указанному городу и сайту
     def update(self, city, type):
-        # try:
         df_new = self.create_today(city, type)
 
         self.datasets[city][type] = pd.concat([self.datasets[city][type], df_new])
 
         self.datasets[city][type].to_csv(os.path.join(path_to_data, f'{city}_{type}_10.csv'))
         self.datasets[city][type].to_excel(os.path.join(path_to_data, f'{city}_{type}_10.xlsx'))
-        #     print("GOOD!")
-        # except:
-        #     print("ERROR!")
+
 
     # Ручное добавление одного дня по указанному городу и сайту
-    def create_new_day(self, city, type, date):
-        date = datetime.strptime(date, '%Y-%m-%d').strftime("%Y-%m-%d")
+    def create_new_day(self, city, type, year, month, day, list_days, list_nights, list_weathers):
+        date = datetime(year, month, day)
+        date = date.strftime('%Y-%m-%d')
 
         data = {'date': [date]}
 
         for i in range(10):
-            print(f"\nВведите day{i + 1}:\n")
-            input_day = input()
-            data[f'day{i + 1}'] = int(input_day)
-
-        for i in range(10):
-            print(f"\nВведите night{i + 1}:\n")
-            input_night = input()
-            data[f'night{i + 1}'] = int(input_night)
-
-        for i in range(10):
-            print(f"\nВведите weather{i + 1}:\n")
-            input_weather = input()
-            data[f'weather{i + 1}'] = input_weather
+            data[f'day{i + 1}'] = list_days[i]
+            data[f'night{i + 1}'] = list_nights[i]
+            data[f'weather{i + 1}'] = list_weathers[i]
 
         df = pd.DataFrame(data)
         df.set_index('date', inplace=True)
 
-        try:
-            self.datasets[city][type] = pd.concat([self.datasets[city][type], df]).sort_index()
+        self.datasets[city][type] = pd.concat([self.datasets[city][type], df]).sort_index()
 
-            self.datasets[city][type].to_csv(os.path.join(path_to_data, f'{city}_{type}_10.csv'))
-            self.datasets[city][type].to_excel(os.path.join(path_to_data, f'{city}_{type}_10.xlsx'))
-            print("GOOD!")
-        except:
-            print("ERROR!")
+        self.datasets[city][type].to_csv(os.path.join(path_to_data, f'{city}_{type}_10.csv'))
+        self.datasets[city][type].to_excel(os.path.join(path_to_data, f'{city}_{type}_10.xlsx'))
+
 
     # Создание backup-а
     def backup(self):
-        csv_folder = os.path.join('backup')
-        try:
-            for city in self.datasets:
-                for type in self.datasets[city]:
-                    file_name_csv = f'{city}_{type}_10.csv'
-                    file_path_csv = os.path.join(csv_folder, file_name_csv)
+        csv_folder = os.path.join(current_dir, "..", "backup")
+        for city in self.datasets:
+            for type in self.datasets[city]:
+                file_name_csv = f'{city}_{type}_10.csv'
+                file_path_csv = os.path.join(csv_folder, file_name_csv)
 
-                    file_name_excel = f'{city}_{type}_10.xlsx'
-                    file_path_excel = os.path.join(csv_folder, file_name_excel)
+                file_name_excel = f'{city}_{type}_10.xlsx'
+                file_path_excel = os.path.join(csv_folder, file_name_excel)
 
-                    self.datasets[city][type].to_csv(file_path_csv)
-                    self.datasets[city][type].to_excel(file_path_excel)
-            print("GOOD backup!")
-        except:
-            print("ERROR backup!")
+                self.datasets[city][type].to_csv(file_path_csv)
+                self.datasets[city][type].to_excel(file_path_excel)
+
 
     # Просмотр таблицы по городу и сайту
     def view(self, city, type, key="tail"):

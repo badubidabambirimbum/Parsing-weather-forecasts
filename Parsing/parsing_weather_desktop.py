@@ -10,7 +10,6 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import os
-import sys
 
 current_dir = os.path.dirname(__file__)
 path_to_data = os.path.join(current_dir, "..", "photo")
@@ -18,17 +17,19 @@ path_to_data = os.path.join(current_dir, "..", "photo")
 class Ui_Parsing_Weather(object):
     def setupUi(self, Parsing_Weather):
         Parsing_Weather.setObjectName("Parsing_Weather")
-        Parsing_Weather.resize(942, 483)
+        Parsing_Weather.resize(943, 524)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(os.path.join(path_to_data, 'icon.png')), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         Parsing_Weather.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(Parsing_Weather)
         self.centralwidget.setObjectName("centralwidget")
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton.setEnabled(True)
         self.pushButton.setGeometry(QtCore.QRect(100, 110, 201, 61))
         font = QtGui.QFont()
         font.setPointSize(15)
         self.pushButton.setFont(font)
+        self.pushButton.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.pushButton.setObjectName("pushButton")
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_2.setGeometry(QtCore.QRect(100, 190, 201, 61))
@@ -99,9 +100,15 @@ class Ui_Parsing_Weather(object):
         font.setStrikeOut(False)
         self.radioButton.setFont(font)
         self.radioButton.setObjectName("radioButton")
+        self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_5.setGeometry(QtCore.QRect(540, 430, 231, 31))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.pushButton_5.setFont(font)
+        self.pushButton_5.setObjectName("pushButton_5")
         Parsing_Weather.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(Parsing_Weather)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 942, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 943, 21))
         self.menubar.setObjectName("menubar")
         Parsing_Weather.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(Parsing_Weather)
@@ -125,6 +132,7 @@ class Ui_Parsing_Weather(object):
         self.groupBox_2.setTitle(_translate("Parsing_Weather", "Сбор данных"))
         self.radioButton_2.setText(_translate("Parsing_Weather", "Yandex"))
         self.radioButton.setText(_translate("Parsing_Weather", "GisMeteo"))
+        self.pushButton_5.setText(_translate("Parsing_Weather", "Добавить день вручную"))
 
 
 if __name__ == "__main__":
